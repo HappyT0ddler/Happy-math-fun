@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Math Fun 🎈</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Comic Sans MS", "Comic Neue", system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(180deg, #87cefa, #fff);
+    }
+
+    .game {
+      background: white;
+      width: 420px;
+      max-width: 95vw;
+      border-radius: 24px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      color: #ff6f61;
+    }
+
+    .question {
+      font-size: 26px;
+      margin: 20px 0;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .answer {
+      font-size: 24px;
+      padding: 15px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      background: #ffe066;
+      transition: transform 0.15s ease;
+    }
+
+    .answer:hover {
+      transform: scale(1.05);
+    }
+
+    .answer.correct {
+      background: #8ef2a1;
+    }
+
+    .answer.wrong {
+      background: #ff9aa2;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 20px;
+      min-height: 28px;
+    }
+
+    .stars {
+      font-size: 22px;
+      margin-top: 10px;
+    }
+
+    .confetti {
+      position: fixed;
+      top: -20px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: fall 3s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>🎉 Happy Math Fun 🎉</h1>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div class="message" id="message"></div>
+    <div class="stars">⭐ Stars: <span id="stars">0</span></div>
+  </div>
+
+  <script>
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const messageEl = document.getElementById("message");
+    const starsEl = document.getElementById("stars");
+
+    let stars = 0;
+
+    function randomProblem() {
+      const a = Math.floor(Math.random() * 6); // 0-5
+      const b = Math.floor(Math.random() * 6);
+      const answer = a + b;
+
+      questionEl.textContent = `🍎 ${a} + ${b} = ? 🍎`;
+
+      const options = new Set([answer]);
+      while (options.size < 4) {
+        options.add(Math.floor(Math.random() * 11));
+      }
+
+      answersEl.innerHTML = "";
+      [...options]
+        .sort(() => Math.random() - 0.5)
+        .forEach(value => {
+          const btn = document.createElement("button");
+          btn.className = "answer";
+          btn.textContent = value;
+          btn.onclick = () => checkAnswer(btn, value, answer);
+          answersEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(button, value, correct) {
+      const buttons = document.querySelectorAll('.answer');
+      buttons.forEach(b => b.disabled = true);
+
+      if (value === correct) {
+        button.classList.add("correct");
+        messageEl.textContent = "Great job! 🎈🎉";
+        stars++;
+        starsEl.textContent = stars;
+        spawnConfetti();
+      } else {
+        button.classList.add("wrong");
+        messageEl.textContent = "Oops! Try again 😊";
+      }
+
+      setTimeout(() => {
+        messageEl.textContent = "";
+        randomProblem();
+      }, 1500);
+    }
+
+    function spawnConfetti() {
+      for (let i = 0; i < 20; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3000);
+      }
+    }
+
+    randomProblem();
+  </script>
+</body>
+</html>
